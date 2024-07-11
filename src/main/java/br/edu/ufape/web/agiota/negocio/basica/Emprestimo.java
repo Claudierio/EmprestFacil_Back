@@ -3,6 +3,9 @@ package br.edu.ufape.web.agiota.negocio.basica;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +27,8 @@ public class Emprestimo {
     @OneToMany(mappedBy = "emprestimo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transacao> transacoes;
 
-    @OneToMany(mappedBy = "emprestimo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "emprestimo", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Pagamento> pagamentos;
 
     // Getters and Setters
