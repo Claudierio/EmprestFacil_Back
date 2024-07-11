@@ -2,6 +2,8 @@ package br.edu.ufape.web.agiota.negocio.basica;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +22,7 @@ public class Pagamento {
 
     @ManyToOne
     @JoinColumn(name = "emprestimo_id")
+    @JsonBackReference
     private Emprestimo emprestimo;
 
     // Getters and Setters
