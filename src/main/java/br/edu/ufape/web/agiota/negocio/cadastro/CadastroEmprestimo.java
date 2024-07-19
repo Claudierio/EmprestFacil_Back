@@ -1,30 +1,40 @@
 package br.edu.ufape.web.agiota.negocio.cadastro;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import br.edu.ufape.web.agiota.negocio.basica.Emprestimo;
-import br.edu.ufape.web.agiota.dados.EmprestimoRepository;
-import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmprestimoNaoEncontradoException;
+import br.edu.ufape.web.agiota.negocio.basica.Usuario;
+import br.edu.ufape.web.agiota.negocio.basica.Agiota;
+import java.util.List;
 
-@Service
 public class CadastroEmprestimo {
-    @Autowired
-    private EmprestimoRepository emprestimoRepository;
+    private List<Emprestimo> emprestimos;
 
-    public List<Emprestimo> listarEmprestimos() {
-        return emprestimoRepository.findAll();
+    public void adicionarEmprestimo(Emprestimo emprestimo) {
+        emprestimos.add(emprestimo);
     }
 
-    public Emprestimo salvarEmprestimo(Emprestimo emprestimo) {
-        return emprestimoRepository.save(emprestimo);
+    public Emprestimo buscarEmprestimoPorId(Long id) {
+        return emprestimos.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
     }
 
-    public Emprestimo localizarEmprestimoId(Long id) {
-        return emprestimoRepository.findById(id).orElseThrow(() -> new EmprestimoNaoEncontradoException(id));
+    public List<Emprestimo> buscarEmprestimosPorUsuario(Usuario usuario) {
+        return emprestimos.stream().filter(e -> e.getUsuario().getId().equals(usuario.getId())).toList();
     }
 
-    public void removerEmprestimoId(Long id) {
-        emprestimoRepository.deleteById(id);
+    public List<Emprestimo> buscarEmprestimosPorAgiota(Agiota agiota) {
+        return emprestimos.stream().filter(e -> e.getAgiota().getId().equals(agiota.getId())).toList();
+    }
+
+    public void atualizarEmprestimo(Emprestimo emprestimo) {
+        Emprestimo e = buscarEmprestimoPorId(emprestimo.getId());
+        if (e != null) {
+            e.setValor(emprestimo.getValor());
+            e.setTaxaJuros(emprestimo.getTaxaJuros());
+            e.setDataVencimento(emprestimo.getDataVencimento());
+            e.setParcelas(emprestimo.getParcelas());
+        }
+    }
+
+    public void removerEmprestimo(Long id) {
+        emprestimos.removeIf(e -> e.getId().equals(id));
     }
 }

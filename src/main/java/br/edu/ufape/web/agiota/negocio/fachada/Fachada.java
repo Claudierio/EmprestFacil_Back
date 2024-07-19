@@ -4,17 +4,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ufape.web.agiota.negocio.basica.Avaliacao;
-import br.edu.ufape.web.agiota.negocio.basica.Emprestimo;
-import br.edu.ufape.web.agiota.negocio.basica.Relatorio;
-import br.edu.ufape.web.agiota.negocio.basica.Transacao;
-import br.edu.ufape.web.agiota.dados.AvaliacaoRepository;
-import br.edu.ufape.web.agiota.dados.EmprestimoRepository;
-import br.edu.ufape.web.agiota.dados.TransacaoRepository;
 import br.edu.ufape.web.agiota.negocio.basica.*;
-import br.edu.ufape.web.agiota.dados.PagamentoRepository;
-import br.edu.ufape.web.agiota.dados.RelatorioRepository;
-import br.edu.ufape.web.agiota.dados.NotificacaoRepository;
+import br.edu.ufape.web.agiota.dados.*;
 
 @Service
 public class Fachada {
@@ -35,6 +26,12 @@ public class Fachada {
 
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private AgiotaRepository agiotaRepository;
 
     // Métodos para Emprestimo
     public List<Emprestimo> listarEmprestimos() {
@@ -70,8 +67,8 @@ public class Fachada {
         transacaoRepository.deleteById(id);
     }
 
-    // Métodos para Pagamentof
-    public List<br.edu.ufape.web.agiota.negocio.basica.Pagamento> listarPagamentos() {
+    // Métodos para Pagamento
+    public List<Pagamento> listarPagamentos() {
         return pagamentoRepository.findAll();
     }
 
@@ -79,7 +76,7 @@ public class Fachada {
         return pagamentoRepository.save(pagamento);
     }
 
-    public br.edu.ufape.web.agiota.negocio.basica.Pagamento localizarPagamentoId(Long id) {
+    public Pagamento localizarPagamentoId(Long id) {
         return pagamentoRepository.findById(id).orElse(null);
     }
 
@@ -88,7 +85,7 @@ public class Fachada {
     }
 
     // Métodos para Notificacao
-    public List<br.edu.ufape.web.agiota.negocio.basica.Notificacao> listarNotificacoes() {
+    public List<Notificacao> listarNotificacoes() {
         return notificacaoRepository.findAll();
     }
 
@@ -96,7 +93,7 @@ public class Fachada {
         return notificacaoRepository.save(notificacao);
     }
 
-    public br.edu.ufape.web.agiota.negocio.basica.Notificacao localizarNotificacaoId(Long id) {
+    public Notificacao localizarNotificacaoId(Long id) {
         return notificacaoRepository.findById(id).orElse(null);
     }
 
@@ -130,8 +127,41 @@ public class Fachada {
         avaliacaoRepository.deleteById(id);
     }
 
-    public Avaliacao salvarNotificacao(
-           Avaliacao avaliacao) {
-        return null;
+    public Avaliacao salvarAvaliacao(Avaliacao avaliacao) {
+        return avaliacaoRepository.save(avaliacao);
+    }
+
+    // Métodos para Usuario
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario salvarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario localizarUsuarioId(Long id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public void removerUsuarioId(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    // Métodos para Agiota
+    public List<Agiota> listarAgiotas() {
+        return agiotaRepository.findAll();
+    }
+
+    public Agiota salvarAgiota(Agiota agiota) {
+        return agiotaRepository.save(agiota);
+    }
+
+    public Agiota localizarAgiotaId(Long id) {
+        return agiotaRepository.findById(id).orElse(null);
+    }
+
+    public void removerAgiotaId(Long id) {
+        agiotaRepository.deleteById(id);
     }
 }
