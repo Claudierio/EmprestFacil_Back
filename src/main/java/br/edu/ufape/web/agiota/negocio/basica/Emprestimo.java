@@ -1,37 +1,28 @@
 package br.edu.ufape.web.agiota.negocio.basica;
 
-
-import java.time.LocalDate;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 @Entity
 public class Emprestimo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double valorEmprestado;
-    private LocalDate dataEmprestimo;
-    private Double taxaJuros;
-    private LocalDate dataVencimento;
-    private Integer parcelas;
 
-    @OneToMany(mappedBy = "emprestimo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transacao> transacoes;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
-    @OneToMany(mappedBy = "emprestimo", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Pagamento> pagamentos;
+    @ManyToOne
+    @JoinColumn(name = "agiota_id")
+    private Agiota agiota;
+    @Column(nullable = true)  // Permitir valores nulos temporariamente
+    private double valor;
+    private double taxaJuros;
+    private String dataVencimento;
+    private int parcelas;
 
-    // Getters and Setters
+    // Getters e Setters
+
     public Long getId() {
         return id;
     }
@@ -40,59 +31,51 @@ public class Emprestimo {
         this.id = id;
     }
 
-    public Double getValorEmprestado() {
-        return valorEmprestado;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setValorEmprestado(Double valorEmprestado) {
-        this.valorEmprestado = valorEmprestado;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
-    public LocalDate getDataEmprestimo() {
-        return dataEmprestimo;
+    public Agiota getAgiota() {
+        return agiota;
     }
 
-    public void setDataEmprestimo(LocalDate dataEmprestimo) {
-        this.dataEmprestimo = dataEmprestimo;
+    public void setAgiota(Agiota agiota) {
+        this.agiota = agiota;
     }
 
-    public Double getTaxaJuros() {
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    public double getTaxaJuros() {
         return taxaJuros;
     }
 
-    public void setTaxaJuros(Double taxaJuros) {
+    public void setTaxaJuros(double taxaJuros) {
         this.taxaJuros = taxaJuros;
     }
 
-    public LocalDate getDataVencimento() {
+    public String getDataVencimento() {
         return dataVencimento;
     }
 
-    public void setDataVencimento(LocalDate dataVencimento) {
+    public void setDataVencimento(String dataVencimento) {
         this.dataVencimento = dataVencimento;
     }
 
-    public Integer getParcelas() {
+    public int getParcelas() {
         return parcelas;
     }
 
-    public void setParcelas(Integer parcelas) {
+    public void setParcelas(int parcelas) {
         this.parcelas = parcelas;
-    }
-
-    public List<Transacao> getTransacoes() {
-        return transacoes;
-    }
-
-    public void setTransacoes(List<Transacao> transacoes) {
-        this.transacoes = transacoes;
-    }
-
-    public List<Pagamento> getPagamentos() {
-        return pagamentos;
-    }
-
-    public void setPagamentos(List<Pagamento> pagamentos) {
-        this.pagamentos = pagamentos;
     }
 }
