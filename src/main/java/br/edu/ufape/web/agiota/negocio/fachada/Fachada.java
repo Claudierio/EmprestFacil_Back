@@ -3,8 +3,8 @@ package br.edu.ufape.web.agiota.negocio.fachada;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import br.edu.ufape.web.agiota.negocio.basica.*;
+import br.edu.ufape.web.agiota.negocio.cadastro.exception.LoginException;
 import br.edu.ufape.web.agiota.dados.*;
 
 @Service
@@ -32,7 +32,15 @@ public class Fachada {
 
     @Autowired
     private AgiotaRepository agiotaRepository;
+    
 
+    @Autowired
+    private LoginRepository loginRepository;
+
+    public Usuario login(String email, String senha) {
+        return loginRepository.findByEmailAndSenha(email, senha)
+                .orElseThrow(() -> new LoginException("Credenciais inválidas"));
+    }
     // Métodos para Emprestimo
     public List<Emprestimo> listarEmprestimos() {
         return emprestimoRepository.findAll();

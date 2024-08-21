@@ -1,29 +1,45 @@
 package br.edu.ufape.web.agiota.negocio.cadastro;
 
+import br.edu.ufape.web.agiota.dados.UsuarioRepository;
 import br.edu.ufape.web.agiota.negocio.basica.Usuario;
+import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmailAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
+@Service
 public class CadastroUsuario {
-    private List<Usuario> usuarios;
 
-    public void adicionarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
+    private final UsuarioRepository usuarioRepository;
+
+    @Autowired
+    public CadastroUsuario(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public Usuario buscarUsuarioPorId(Long id) {
-        return usuarios.stream().filter(u -> u.getId().equals(id)).findFirst().orElse(null);
-    }
-
-    public void atualizarUsuario(Usuario usuario) {
-        Usuario u = buscarUsuarioPorId(usuario.getId());
-        if (u != null) {
-            u.setNome(usuario.getNome());
-            u.setEmail(usuario.getEmail());
-            u.setSenha(usuario.getSenha());
+    public Usuario adicionarUsuario(Usuario usuario) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioExistente.isPresent()) {
+            throw new EmailAlreadyExistsException("O email já está em uso: " + usuario.getEmail());
         }
+        return usuarioRepository.save(usuario);
     }
 
-    public void removerUsuario(Long id) {
-        usuarios.removeIf(u -> u.getId().equals(id));
+    public Optional<Usuario> buscarUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id);
+    }
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public Optional<Usuario> buscarUsuarioPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    public void deletarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }

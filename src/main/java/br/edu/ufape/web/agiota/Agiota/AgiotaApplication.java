@@ -7,12 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {
-    "br.edu.ufape.web.agiota.comunicacao",
-    "br.edu.ufape.web.agiota.negocio.basica",
-    "br.edu.ufape.web.agiota.negocio.fachada",
-    "br.edu.ufape.web.agiota.dados"
-})
+@ComponentScan(basePackages = "br.edu.ufape.web.agiota")
 @EntityScan(basePackages = "br.edu.ufape.web.agiota.negocio.basica")
 @EnableJpaRepositories(basePackages = "br.edu.ufape.web.agiota.dados")
 public class AgiotaApplication {

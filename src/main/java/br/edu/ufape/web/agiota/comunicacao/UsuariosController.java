@@ -1,43 +1,53 @@
 package br.edu.ufape.web.agiota.comunicacao;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import br.edu.ufape.web.agiota.negocio.basica.Usuario;
+import br.edu.ufape.web.agiota.negocio.cadastro.CadastroUsuario;
+import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmailAlreadyExistsException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import br.edu.ufape.web.agiota.negocio.basica.Usuario;
-import br.edu.ufape.web.agiota.negocio.fachada.Fachada;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuariosController {
-    @Autowired
-    private Fachada fachada;
+
+    private final CadastroUsuario cadastroUsuario;
+
+    public UsuariosController(CadastroUsuario cadastroUsuario) {
+        this.cadastroUsuario = cadastroUsuario;
+    }
 
     @GetMapping
     public List<Usuario> listarUsuarios() {
-        return fachada.listarUsuarios();
+        return cadastroUsuario.listarUsuarios();
     }
 
     @PostMapping
-    public Usuario criarUsuario(@RequestBody Usuario usuario) {
-        return fachada.salvarUsuario(usuario);
+    public ResponseEntity<?> criarUsuario(@RequestBody Usuario usuario) {
+        try {
+            Usuario novoUsuario = cadastroUsuario.adicionarUsuario(usuario);
+            return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
+        } catch (EmailAlreadyExistsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
     public Usuario exibirUsuario(@PathVariable long id) {
-        return fachada.localizarUsuarioId(id);
+        return cadastroUsuario.buscarUsuarioPorId(id).orElse(null);
     }
 
     @PutMapping("/{id}")
     public Usuario atualizarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
         usuario.setId(id);
-        return fachada.salvarUsuario(usuario);
+        return cadastroUsuario.adicionarUsuario(usuario);
     }
 
     @DeleteMapping("/{id}")
     public String apagarUsuario(@PathVariable long id) {
-        fachada.removerUsuarioId(id);
+        cadastroUsuario.deletarUsuario(id);
         return "Usuário removido com sucesso!";
     }
 }
