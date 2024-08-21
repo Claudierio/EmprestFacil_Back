@@ -2,6 +2,7 @@ package br.edu.ufape.web.agiota.negocio.basica;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 public class Usuario {
@@ -11,6 +12,10 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+    private LocalDate dataNascimento;
+
+    @Transient
+    private String confirmarSenha;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Emprestimo> emprestimos;
@@ -47,6 +52,22 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public String getConfirmarSenha() {
+        return confirmarSenha;
+    }
+
+    public void setConfirmarSenha(String confirmarSenha) {
+        this.confirmarSenha = confirmarSenha;
     }
 
     public List<Emprestimo> getEmprestimos() {

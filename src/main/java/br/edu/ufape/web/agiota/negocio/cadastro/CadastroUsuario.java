@@ -3,6 +3,7 @@ package br.edu.ufape.web.agiota.negocio.cadastro;
 import br.edu.ufape.web.agiota.dados.UsuarioRepository;
 import br.edu.ufape.web.agiota.negocio.basica.Usuario;
 import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmailAlreadyExistsException;
+import br.edu.ufape.web.agiota.negocio.cadastro.exception.SenhaNaoConfereException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,13 @@ public class CadastroUsuario {
         if (usuarioExistente.isPresent()) {
             throw new EmailAlreadyExistsException("O email já está em uso: " + usuario.getEmail());
         }
+
+        if (!usuario.getSenha().equals(usuario.getConfirmarSenha())) {
+            throw new SenhaNaoConfereException("A senha e a confirmação de senha não coincidem.");
+        }
         return usuarioRepository.save(usuario);
     }
+
 
     public Optional<Usuario> buscarUsuarioPorId(Long id) {
         return usuarioRepository.findById(id);

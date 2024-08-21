@@ -3,6 +3,7 @@ package br.edu.ufape.web.agiota.comunicacao;
 import br.edu.ufape.web.agiota.negocio.basica.Usuario;
 import br.edu.ufape.web.agiota.negocio.cadastro.CadastroUsuario;
 import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmailAlreadyExistsException;
+import br.edu.ufape.web.agiota.negocio.cadastro.exception.SenhaNaoConfereException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,11 @@ public class UsuariosController {
         try {
             Usuario novoUsuario = cadastroUsuario.adicionarUsuario(usuario);
             return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
-        } catch (EmailAlreadyExistsException e) {
+        } catch (EmailAlreadyExistsException | SenhaNaoConfereException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping("/{id}")
     public Usuario exibirUsuario(@PathVariable long id) {
