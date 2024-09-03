@@ -33,6 +33,32 @@ public class CadastroUsuario {
 
         return usuarioRepository.save(usuario);
     }
+    public Usuario atualizarUsuario(Usuario usuario) {
+        // Verifique se o usuário existe no banco de dados
+        Optional<Usuario> usuarioExistente = usuarioRepository.findById(usuario.getId());
+        if (!usuarioExistente.isPresent()) {
+            throw new IllegalArgumentException("Usuário não encontrado com o ID: " + usuario.getId());
+        }
+
+        // Se o email foi alterado, verifique se o novo email já está em uso
+        if (!usuarioExistente.get().getEmail().equals(usuario.getEmail())) {
+            Optional<Usuario> emailExistente = usuarioRepository.findByEmail(usuario.getEmail());
+            if (emailExistente.isPresent()) {
+                throw new EmailAlreadyExistsException("O email já está em uso: " + usuario.getEmail());
+            }
+        }
+
+        // Criptografar a nova senha, se fornecida
+        if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        } else {
+            // Se a senha não foi alterada, mantenha a senha antiga
+            usuario.setSenha(usuarioExistente.get().getSenha());
+        }
+
+        return usuarioRepository.save(usuario);
+    }
+
 
     public Optional<Usuario> buscarUsuarioPorId(Long id) {
         return usuarioRepository.findById(id);

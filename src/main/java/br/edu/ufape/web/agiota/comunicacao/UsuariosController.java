@@ -42,8 +42,10 @@ public class UsuariosController {
     @PutMapping("/{id}")
     public Usuario atualizarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
         usuario.setId(id);
-        return cadastroUsuario.adicionarUsuario(usuario);
+        return cadastroUsuario.atualizarUsuario(usuario);
     }
+
+    
 
     @DeleteMapping("/{id}")
     public String apagarUsuario(@PathVariable long id) {
