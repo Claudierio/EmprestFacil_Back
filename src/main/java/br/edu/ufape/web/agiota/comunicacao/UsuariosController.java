@@ -40,11 +40,11 @@ public class UsuariosController {
     }
 
     @PutMapping("/{id}")
-    public Usuario atualizarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<?> atualizarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
         usuario.setId(id);
-        return cadastroUsuario.atualizarUsuario(usuario);
+        Usuario usuarioAtualizado = cadastroUsuario.atualizarUsuario(usuario);
+        return ResponseEntity.ok(usuarioAtualizado);
     }
-
     
 
     @DeleteMapping("/{id}")

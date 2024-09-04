@@ -1,6 +1,7 @@
 package br.edu.ufape.web.agiota.negocio.basica;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -12,6 +13,10 @@ public class Usuario {
     private String email;
     private String senha;
     private LocalDate dataNascimento;
+
+    // Definindo o campo role
+    @Enumerated(EnumType.STRING) // Define como enum string no banco de dados
+    private Role role;
 
     // Getters e Setters
 
@@ -53,5 +58,13 @@ public class Usuario {
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -34,30 +34,24 @@ public class CadastroUsuario {
         return usuarioRepository.save(usuario);
     }
     public Usuario atualizarUsuario(Usuario usuario) {
-        // Verifique se o usuário existe no banco de dados
         Optional<Usuario> usuarioExistente = usuarioRepository.findById(usuario.getId());
-        if (!usuarioExistente.isPresent()) {
-            throw new IllegalArgumentException("Usuário não encontrado com o ID: " + usuario.getId());
-        }
 
-        // Se o email foi alterado, verifique se o novo email já está em uso
-        if (!usuarioExistente.get().getEmail().equals(usuario.getEmail())) {
-            Optional<Usuario> emailExistente = usuarioRepository.findByEmail(usuario.getEmail());
-            if (emailExistente.isPresent()) {
-                throw new EmailAlreadyExistsException("O email já está em uso: " + usuario.getEmail());
+        if (usuarioExistente.isPresent()) {
+            Usuario usuarioAtualizado = usuarioExistente.get();
+            usuarioAtualizado.setNome(usuario.getNome());
+            usuarioAtualizado.setEmail(usuario.getEmail());
+
+            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+                usuarioAtualizado.setSenha(passwordEncoder.encode(usuario.getSenha()));
             }
-        }
 
-        // Criptografar a nova senha, se fornecida
-        if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
-            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        } else {
-            // Se a senha não foi alterada, mantenha a senha antiga
-            usuario.setSenha(usuarioExistente.get().getSenha());
+            usuarioAtualizado.setDataNascimento(usuario.getDataNascimento());
+            usuarioAtualizado.setRole(usuario.getRole());
+            return usuarioRepository.save(usuarioAtualizado);
         }
-
-        return usuarioRepository.save(usuario);
+        throw new RuntimeException("Usuário não encontrado.");
     }
+
 
 
     public Optional<Usuario> buscarUsuarioPorId(Long id) {
