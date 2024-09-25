@@ -48,25 +48,3 @@ public class AgiotasController {
         fachada.removerAgiotaId(id);
         return "Agiota removido com sucesso!";
     }
-
-    @PostMapping("/{agiotaId}/emprestimos")
-    public Emprestimo solicitarEmprestimo(
-            @PathVariable Long agiotaId,
-            @RequestBody Emprestimo emprestimoRequest) {
-
-        // Localizar o agiota pelo ID
-        Agiota agiota = fachada.localizarAgiotaId(agiotaId);
-        if (agiota == null) {
-            throw new RuntimeException("Agiota não encontrado!");
-        }
-
-        // Vincular o agiota ao empréstimo
-        emprestimoRequest.setAgiota(agiota);
-
-        // Calcular a taxa de juros com base no agiota
-        emprestimoRequest.setTaxaJuros(agiota.getTaxaJuros());
-
-        // Salvar o empréstimo
-        return fachada.salvarEmprestimo(emprestimoRequest);
-    }
-}
