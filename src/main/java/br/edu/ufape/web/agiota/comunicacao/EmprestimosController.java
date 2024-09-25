@@ -1,15 +1,18 @@
 package br.edu.ufape.web.agiota.comunicacao;
 
-import java.util.Map;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import br.edu.ufape.web.agiota.negocio.basica.Emprestimo;
-import br.edu.ufape.web.agiota.negocio.basica.Usuario;
-import br.edu.ufape.web.agiota.negocio.basica.Agiota;
 import br.edu.ufape.web.agiota.negocio.fachada.Fachada;
+
+import org.keycloak.KeycloakPrincipal;
+
 
 @RestController
 @RequestMapping("/api/emprestimos")
@@ -18,80 +21,31 @@ public class EmprestimosController {
     @Autowired
     private Fachada fachada;
 
+    // Lista todos os empréstimos (apenas usuários com a role 'user')
     @GetMapping
+    @PreAuthorize("hasRole('user')")
     public List<Emprestimo> listarEmprestimos() {
         return fachada.listarEmprestimos();
     }
 
-    @PostMapping
-    public Emprestimo criarEmprestimo(@RequestBody Map<String, Object> payload) {
-        // Obtendo IDs de usuario e agiota do payload
-        Long usuarioId = Long.valueOf(payload.get("usuario").toString());
-        Long agiotaId = Long.valueOf(payload.get("agiota").toString());
-
-        // Buscando Usuario e Agiota pelo ID
-        Usuario usuario = fachada.localizarUsuarioId(usuarioId);
-        Agiota agiota = fachada.localizarAgiotaId(agiotaId);
-        // Validação dos IDs de usuario e agiota
-        if (usuario == null || agiota == null) {
-            throw new IllegalArgumentException("Usuário ou agiota inválido");
-        }
-
-        // Criando novo empréstimo
-        Emprestimo emprestimo = new Emprestimo();
-        emprestimo.setUsuario(usuario);
-        emprestimo.setAgiota(agiota);
-        emprestimo.setValor(Double.parseDouble(payload.get("valorEmprestado").toString()));
-        emprestimo.setTaxaJuros(Double.parseDouble(payload.get("taxaJuros").toString()));
-        emprestimo.setDataVencimento(payload.get("dataVencimento").toString());
-        emprestimo.setParcelas(Integer.parseInt(payload.get("parcelas").toString()));
-        System.out.println(emprestimo.getAgiota().getNome());
-        // Salvando empréstimo
-        return fachada.salvarEmprestimo(emprestimo);
+    // Solicitação de empréstimo (apenas usuários com a role 'usuario')
+    @PostMapping("/pedir-emprestimo")
+    @PreAuthorize("hasRole('usuario') and #userInfo.containsKey('pedi_emprestimo')") 
+    public ResponseEntity<String> pedirEmprestimo(@AuthenticationPrincipal KeycloakPrincipal<?> userInfo) {
+        return ResponseEntity.ok("Empréstimo solicitado com sucesso!");
     }
 
-    @GetMapping("/{id}")
-    public Emprestimo exibirEmprestimo(@PathVariable long id) {
-        return fachada.localizarEmprestimoId(id);
+    // Aprovação de empréstimo (apenas agiotas)
+    @PostMapping("/aprovar-emprestimo")
+    @PreAuthorize("hasRole('agiota') and #userInfo.containsKey('emprestar')")
+    public ResponseEntity<String> aprovarEmprestimo(@AuthenticationPrincipal KeycloakPrincipal<?> userInfo) {
+        return ResponseEntity.ok("Empréstimo aprovado pelo agiota!");
     }
 
-    @PutMapping("/{id}")
-    public Emprestimo atualizarEmprestimo(@PathVariable long id, @RequestBody Map<String, Object> payload) {
-        // Buscando o empréstimo existente
-        Emprestimo emprestimoExistente = fachada.localizarEmprestimoId(id);
-
-        if (emprestimoExistente == null) {
-            throw new IllegalArgumentException("Empréstimo não encontrado");
-        }
-
-        // Obtendo IDs de usuario e agiota do payload
-        Long usuarioId = Long.valueOf(payload.get("usuario").toString());
-        Long agiotaId = Long.valueOf(payload.get("agiota").toString());
-
-        // Buscando Usuario e Agiota pelo ID
-        Usuario usuario = fachada.localizarUsuarioId(usuarioId);
-        Agiota agiota = fachada.localizarAgiotaId(agiotaId);
-
-        // Validação dos IDs de usuario e agiota
-        if (usuario == null || agiota == null) {
-            throw new IllegalArgumentException("Usuário ou agiota inválido");
-        }
-
-        // Atualizando os dados do empréstimo
-        emprestimoExistente.setUsuario(usuario);
-        emprestimoExistente.setAgiota(agiota);
-        emprestimoExistente.setValor(Double.parseDouble(payload.get("valorEmprestado").toString()));
-        emprestimoExistente.setTaxaJuros(Double.parseDouble(payload.get("taxaJuros").toString()));
-        emprestimoExistente.setDataVencimento(payload.get("dataVencimento").toString());
-        emprestimoExistente.setParcelas(Integer.parseInt(payload.get("parcelas").toString()));
-
-        // Salvando as alterações
-        return fachada.salvarEmprestimo(emprestimoExistente);
-    }
-
-    @DeleteMapping("/{id}")
-    public String apagarEmprestimo(@PathVariable long id) {
-        fachada.removerEmprestimoId(id);
-        return "Empréstimo removido com sucesso!";
+    // Deletar usuário (apenas gerentes)
+    @DeleteMapping("/deletar-usuario")
+    @PreAuthorize("hasRole('gerente') and #userInfo.containsKey('apagar_user')")
+    public ResponseEntity<String> deletarUsuario(@RequestParam String username, @AuthenticationPrincipal KeycloakPrincipal<?> userInfo) {
+        return ResponseEntity.ok("Usuário " + username + " deletado com sucesso!");
     }
 }
