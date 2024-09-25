@@ -3,8 +3,14 @@ package br.edu.ufape.web.agiota.negocio.basica;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@JsonIgnoreProperties("emprestimos")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +23,9 @@ public class Usuario {
     // Definindo o campo role
     @Enumerated(EnumType.STRING) // Define como enum string no banco de dados
     private Role role;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Emprestimo> emprestimos;
 
     // Getters e Setters
 
