@@ -1,21 +1,27 @@
 package br.edu.ufape.web.agiota.negocio.basica;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"usuario", "agiota"})  // Ignora a propriedade usuario durante a serialização
 public class Emprestimo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false) // O agiota é obrigatório
+    @JoinColumn(name = "agiota_id")
+    @JsonManagedReference
+    private Agiota agiota;
+
+    @ManyToOne(optional = false) // O usuário é obrigatório
     @JoinColumn(name = "usuario_id")
+    @JsonManagedReference
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "agiota_id")
-    private Agiota agiota;
-    @Column(nullable = true)  // Permitir valores nulos temporariamente
     private double valor;
     private double taxaJuros;
     private String dataVencimento;

@@ -3,7 +3,12 @@ package br.edu.ufape.web.agiota.negocio.basica;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
+@JsonIgnoreProperties("emprestimos") // Permite a serialização dos empréstimos sem recursão
 public class Agiota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +18,8 @@ public class Agiota {
     private String senha;
     private double taxaJuros;
 
-    @OneToMany(mappedBy = "agiota", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "agiota", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonBackReference
     private List<Emprestimo> emprestimos;
 
     // Getters e Setters

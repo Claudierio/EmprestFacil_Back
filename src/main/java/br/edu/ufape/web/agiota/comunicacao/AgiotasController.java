@@ -27,6 +27,7 @@ public class AgiotasController {
     @GetMapping("/{id}")
     public Agiota exibirAgiota(@PathVariable long id) {
         return fachada.localizarAgiotaId(id);
+        
     }
 
     @PutMapping("/{id}")
