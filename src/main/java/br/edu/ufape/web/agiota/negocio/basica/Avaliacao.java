@@ -3,19 +3,33 @@ package br.edu.ufape.web.agiota.negocio.basica;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @Entity
 public class Avaliacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Min(1)
+    @Max(5)
     private Integer nota;
+
     private String comentario;
     private LocalDate dataAvaliacao;
+
+    @ManyToOne
+    @JoinColumn(name = "agiota_id")
+    private Agiota agiota;
 
     // Getters and Setters
 
@@ -49,5 +63,13 @@ public class Avaliacao {
 
     public void setDataAvaliacao(LocalDate dataAvaliacao) {
         this.dataAvaliacao = dataAvaliacao;
+    }
+
+    public Agiota getAgiota() {
+        return agiota;
+    }
+
+    public void setAgiota(Agiota agiota) {
+        this.agiota = agiota;
     }
 }

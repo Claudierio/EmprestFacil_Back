@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@JsonIgnoreProperties("emprestimos") // Permite a serialização dos empréstimos sem recursão
+@JsonIgnoreProperties({ "emprestimos", "avaliacoes" })
 public class Agiota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,9 @@ public class Agiota {
     @OneToMany(mappedBy = "agiota", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonBackReference
     private List<Emprestimo> emprestimos;
+
+    @OneToMany(mappedBy = "agiota", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Avaliacao> avaliacoes;
 
     // Getters e Setters
 
@@ -70,5 +73,13 @@ public class Agiota {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
     }
 }

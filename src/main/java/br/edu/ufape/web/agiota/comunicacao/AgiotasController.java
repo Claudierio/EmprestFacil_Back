@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import br.edu.ufape.web.agiota.negocio.basica.Agiota;
+import br.edu.ufape.web.agiota.negocio.basica.Avaliacao;
 import br.edu.ufape.web.agiota.negocio.fachada.Fachada;
 
 @RestController
@@ -27,7 +28,7 @@ public class AgiotasController {
     @GetMapping("/{id}")
     public Agiota exibirAgiota(@PathVariable long id) {
         return fachada.localizarAgiotaId(id);
-        
+
     }
 
     @PutMapping("/{id}")
@@ -40,5 +41,16 @@ public class AgiotasController {
     public String apagarAgiota(@PathVariable long id) {
         fachada.removerAgiotaId(id);
         return "Agiota removido com sucesso!";
+    }
+
+    @PostMapping("/{id}/avaliacoes")
+    public Avaliacao adicionarAvaliacao(@PathVariable Long id, @RequestBody Avaliacao avaliacao) {
+        Agiota agiota = fachada.localizarAgiotaId(id);
+        if (agiota != null) {
+            avaliacao.setAgiota(agiota);
+            return fachada.salvarAvaliacao(avaliacao);
+        } else {
+            throw new RuntimeException("Agiota não encontrado");
+        }
     }
 }
