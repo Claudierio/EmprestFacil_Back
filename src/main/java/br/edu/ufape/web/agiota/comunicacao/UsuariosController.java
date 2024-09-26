@@ -6,7 +6,6 @@ import br.edu.ufape.web.agiota.negocio.cadastro.exception.EmailAlreadyExistsExce
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -45,7 +44,6 @@ public class UsuariosController {
         Usuario usuarioAtualizado = cadastroUsuario.atualizarUsuario(usuario);
         return ResponseEntity.ok(usuarioAtualizado);
     }
-    
 
     @DeleteMapping("/{id}")
     public String apagarUsuario(@PathVariable long id) {

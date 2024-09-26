@@ -28,7 +28,6 @@ public class CadastroEmprestimo {
         Emprestimo e = buscarEmprestimoPorId(emprestimo.getId());
         if (e != null) {
             e.setValor(emprestimo.getValor());
-            e.setTaxaJuros(emprestimo.getTaxaJuros());
             e.setDataVencimento(emprestimo.getDataVencimento());
             e.setParcelas(emprestimo.getParcelas());
         }

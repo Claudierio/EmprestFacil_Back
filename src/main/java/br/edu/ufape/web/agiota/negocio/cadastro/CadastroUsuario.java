@@ -14,12 +14,12 @@ import java.util.Optional;
 public class CadastroUsuario {
 
     private final UsuarioRepository usuarioRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CadastroUsuario(UsuarioRepository usuarioRepository) {
+    public CadastroUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
-    
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Usuario adicionarUsuario(Usuario usuario) {
@@ -29,7 +29,7 @@ public class CadastroUsuario {
         }
 
         // Criptografar a senha antes de salvar
-   
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 
         return usuarioRepository.save(usuario);
     }
@@ -40,6 +40,10 @@ public class CadastroUsuario {
             Usuario usuarioAtualizado = usuarioExistente.get();
             usuarioAtualizado.setNome(usuario.getNome());
             usuarioAtualizado.setEmail(usuario.getEmail());
+
+            if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+                usuarioAtualizado.setSenha(passwordEncoder.encode(usuario.getSenha()));
+            }
 
             usuarioAtualizado.setDataNascimento(usuario.getDataNascimento());
             usuarioAtualizado.setRole(usuario.getRole());

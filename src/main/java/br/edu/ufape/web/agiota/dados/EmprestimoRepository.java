@@ -6,4 +6,5 @@ import br.edu.ufape.web.agiota.negocio.basica.Emprestimo;
 
 @Repository
 public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
+
 }

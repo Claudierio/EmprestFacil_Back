@@ -11,19 +11,20 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false) // O agiota é obrigatório
+    @ManyToOne(optional = false)
     @JoinColumn(name = "agiota_id")
     @JsonManagedReference
     private Agiota agiota;
 
-    @ManyToOne(optional = false) // O usuário é obrigatório
+    @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id")
     @JsonManagedReference
     private Usuario usuario;
 
     private double valor;
-    private double taxaJuros;
     private String dataVencimento;
+    private String dataEmprestimo;
+
     private int parcelas;
 
     // Getters e Setters
@@ -60,14 +61,6 @@ public class Emprestimo {
         this.valor = valor;
     }
 
-    public double getTaxaJuros() {
-        return taxaJuros;
-    }
-
-    public void setTaxaJuros(double taxaJuros) {
-        this.taxaJuros = taxaJuros;
-    }
-
     public String getDataVencimento() {
         return dataVencimento;
     }
@@ -82,5 +75,13 @@ public class Emprestimo {
 
     public void setParcelas(int parcelas) {
         this.parcelas = parcelas;
+    }
+
+    public void setDataEmprestimo(String dataEmprestimo) {
+        this.dataEmprestimo = dataEmprestimo;
+    }
+
+    public String getDataEmprestimo() {
+        return dataEmprestimo;
     }
 }
